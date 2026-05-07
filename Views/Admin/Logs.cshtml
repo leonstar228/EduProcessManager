@@ -1,0 +1,3 @@
+@model IEnumerable<AuditLog>
+@{ ViewData["Title"] = "Журнал дій"; }
+<div class="soft-card p-4"><h2 class="section-title">Журнал дій</h2><table class="table"><thead><tr><th>Дата</th><th>Користувач</th><th>Дія</th></tr></thead><tbody>@foreach(var l in Model){<tr><td>@l.CreatedAt</td><td>@l.UserId</td><td>@l.Action</td></tr>}</tbody></table></div>

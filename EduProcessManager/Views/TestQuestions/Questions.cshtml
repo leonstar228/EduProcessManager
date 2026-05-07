@@ -1,0 +1,116 @@
+﻿@model Test
+
+@{
+    ViewData["Title"] = "Питання тесту";
+}
+
+<div class="soft-card p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+            <h2 class="section-title mb-1">@Model.Title</h2>
+            <div class="text-muted">Редагування питань тесту</div>
+        </div>
+
+        <div class="d-flex gap-2 flex-wrap">
+            <a asp-controller="TestQuestions"
+               asp-action="CreateQuestion"
+               asp-route-testId="@Model.Id"
+               class="btn edu-btn">
+                Додати питання
+            </a>
+
+            <a asp-controller="Tests"
+               asp-action="Details"
+               asp-route-id="@Model.Id"
+               class="btn btn-outline-secondary">
+                Назад до тесту
+            </a>
+        </div>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+@if (!Model.Questions.Any())
+{
+    <div class="soft-card p-4 text-center text-muted">
+        У цьому тесті ще немає питань
+    </div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var question in Model.Questions.OrderBy(q => q.Id))
+        {
+            <div class="col-12">
+                <div class="soft-card p-4">
+                    <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+                        <div class="flex-grow-1">
+                            <h5 class="mb-2">@question.Text</h5>
+
+                            <div class="mb-3">
+                                <span class="badge bg-light text-dark border me-1">
+                                    @question.Points б.
+                                </span>
+
+                                @if (question.AllowMultipleAnswers)
+                                {
+                                    <span class="badge bg-light text-dark border">
+                                        Декілька правильних відповідей
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-light text-dark border">
+                                        Одна правильна відповідь
+                                    </span>
+                                }
+                            </div>
+
+                            <ul class="mb-0">
+                                @foreach (var option in question.AnswerOptions.OrderBy(o => o.Id))
+                                {
+                                    <li>
+                                        @option.Text
+
+                                        @if (option.IsCorrect)
+                                        {
+                                            <span class="text-success fw-semibold">
+                                                правильна
+                                            </span>
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a asp-controller="TestQuestions"
+                               asp-action="EditQuestion"
+                               asp-route-id="@question.Id"
+                               class="btn btn-sm btn-outline-primary">
+                                Редагувати
+                            </a>
+
+                            <form asp-controller="TestQuestions"
+                                  asp-action="DeleteQuestion"
+                                  asp-route-id="@question.Id"
+                                  method="post"
+                                  onsubmit="return confirm('Видалити це питання?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    Видалити
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

@@ -1,0 +1,3 @@
+@model TestAttempt
+@{ ViewData["Title"] = "Результат"; var percent = Model.Percent; }
+<div class="soft-card p-4"><h2>Результат тесту</h2><p class="text-muted">@Model.Test?.Title</p><div class="display-5 fw-bold mb-2">@Model.Score / @Model.MaxScore</div><div class="progress mb-3"><div class="progress-bar" style="width:@percent%"></div></div><p>Відсоток виконання: <strong>@percent%</strong></p><a class="btn edu-btn" asp-action="Index">До тестів</a></div>

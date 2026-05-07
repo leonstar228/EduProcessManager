@@ -1,0 +1,243 @@
+﻿@model EduProcessManager.ViewModels.Questions.QuestionFormViewModel
+
+@{
+    ViewData["Title"] = "Редагування питання";
+}
+
+<div class="soft-card p-4">
+    <h2 class="section-title mb-1">Редагування питання</h2>
+    <div class="text-muted mb-4">@Model.TestTitle</div>
+
+    <form asp-controller="TestQuestions" asp-action="EditQuestion" method="post">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="TestId" />
+        <input type="hidden" asp-for="TestTitle" />
+
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label class="form-label">Текст питання</label>
+            <textarea asp-for="Text" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Text" class="text-danger"></span>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <label class="form-label">Бали за питання</label>
+                <input asp-for="Points" class="form-control" type="number" min="1" />
+                <span asp-validation-for="Points" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-8 d-flex align-items-end">
+                <div class="form-check form-switch mb-2">
+                    <input asp-for="AllowMultipleAnswers" class="form-check-input" id="AllowMultipleAnswers" />
+                    <label class="form-check-label" for="AllowMultipleAnswers">
+                        Питання має декілька правильних відповідей
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">Варіанти відповідей</h5>
+
+            <button type="button" class="btn btn-sm btn-outline-primary" id="addOptionBtn">
+                Додати варіант
+            </button>
+        </div>
+
+        <div id="optionsContainer">
+            @for (int i = 0; i < Model.Options.Count; i++)
+            {
+                <div class="row g-2 align-items-center mb-2 option-row">
+                    <input type="hidden" name="Options[@i].Id" value="@Model.Options[i].Id" />
+
+                    <div class="col-md-8">
+                        <input name="Options[@i].Text"
+                               value="@Model.Options[i].Text"
+                               class="form-control option-text"
+                               placeholder="Варіант відповіді" />
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-check single-correct-block">
+                            @if (Model.CorrectOptionIndex == i)
+                            {
+                                <input class="form-check-input single-correct-radio"
+                                       type="radio"
+                                       name="CorrectOptionIndex"
+                                       value="@i"
+                                       id="singleCorrect@i"
+                                       checked />
+                            }
+                            else
+                            {
+                                <input class="form-check-input single-correct-radio"
+                                       type="radio"
+                                       name="CorrectOptionIndex"
+                                       value="@i"
+                                       id="singleCorrect@i" />
+                            }
+
+                            <label class="form-check-label" for="singleCorrect@i">Правильна</label>
+                        </div>
+
+                        <div class="form-check multiple-correct-block d-none">
+                            @if (Model.Options[i].IsCorrect)
+                            {
+                                <input class="form-check-input multiple-correct-checkbox"
+                                       type="checkbox"
+                                       name="Options[@i].IsCorrect"
+                                       value="true"
+                                       checked />
+                            }
+                            else
+                            {
+                                <input class="form-check-input multiple-correct-checkbox"
+                                       type="checkbox"
+                                       name="Options[@i].IsCorrect"
+                                       value="true" />
+                            }
+
+                            <input type="hidden" name="Options[@i].IsCorrect" value="false" />
+                            <label class="form-check-label">Правильна</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-1 text-end">
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-option-btn">
+                            ×
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+            <button type="submit" class="btn edu-btn px-4">
+                Зберегти
+            </button>
+
+            <a asp-controller="TestQuestions"
+               asp-action="Questions"
+               asp-route-testId="@Model.TestId"
+               class="btn btn-outline-secondary">
+                Назад
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const allowMultiple = document.getElementById("AllowMultipleAnswers");
+        const optionsContainer = document.getElementById("optionsContainer");
+        const addOptionBtn = document.getElementById("addOptionBtn");
+
+        function syncAnswerType() {
+            const singleBlocks = document.querySelectorAll(".single-correct-block");
+            const multipleBlocks = document.querySelectorAll(".multiple-correct-block");
+
+            if (allowMultiple.checked) {
+                singleBlocks.forEach(x => x.classList.add("d-none"));
+                multipleBlocks.forEach(x => x.classList.remove("d-none"));
+            } else {
+                singleBlocks.forEach(x => x.classList.remove("d-none"));
+                multipleBlocks.forEach(x => x.classList.add("d-none"));
+            }
+        }
+
+        function reindexOptions() {
+            const rows = document.querySelectorAll(".option-row");
+
+            rows.forEach((row, index) => {
+                const id = row.querySelector("input[name$='.Id']");
+                const text = row.querySelector(".option-text");
+                const radio = row.querySelector(".single-correct-radio");
+                const checkbox = row.querySelector(".multiple-correct-checkbox");
+                const hidden = row.querySelector("input[type='hidden'][name$='.IsCorrect']");
+
+                if (id) id.name = `Options[${index}].Id`;
+
+                text.name = `Options[${index}].Text`;
+
+                radio.name = "CorrectOptionIndex";
+                radio.value = index;
+                radio.id = `singleCorrect${index}`;
+
+                row.querySelector(".single-correct-block label").setAttribute("for", `singleCorrect${index}`);
+
+                checkbox.name = `Options[${index}].IsCorrect`;
+                hidden.name = `Options[${index}].IsCorrect`;
+            });
+        }
+
+        function bindRemoveButtons() {
+            document.querySelectorAll(".remove-option-btn").forEach(button => {
+                button.onclick = function () {
+                    const rows = document.querySelectorAll(".option-row");
+
+                    if (rows.length <= 2) {
+                        alert("Має бути мінімум два варіанти відповіді.");
+                        return;
+                    }
+
+                    this.closest(".option-row").remove();
+                    reindexOptions();
+                    syncAnswerType();
+                };
+            });
+        }
+
+        addOptionBtn.addEventListener("click", function () {
+            const index = document.querySelectorAll(".option-row").length;
+
+            const row = document.createElement("div");
+            row.className = "row g-2 align-items-center mb-2 option-row";
+
+            row.innerHTML = `
+                        <input type="hidden" name="Options[${index}].Id" value="0" />
+
+                        <div class="col-md-8">
+                            <input name="Options[${index}].Text" class="form-control option-text" placeholder="Варіант відповіді" />
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-check single-correct-block">
+                                <input class="form-check-input single-correct-radio"
+                                       type="radio"
+                                       name="CorrectOptionIndex"
+                                       value="${index}"
+                                       id="singleCorrect${index}" />
+                                <label class="form-check-label" for="singleCorrect${index}">Правильна</label>
+                            </div>
+
+                            <div class="form-check multiple-correct-block d-none">
+                                <input class="form-check-input multiple-correct-checkbox"
+                                       type="checkbox"
+                                       name="Options[${index}].IsCorrect"
+                                       value="true" />
+                                <input type="hidden" name="Options[${index}].IsCorrect" value="false" />
+                                <label class="form-check-label">Правильна</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-1 text-end">
+                            <button type="button" class="btn btn-sm btn-outline-danger remove-option-btn">
+                                ×
+                            </button>
+                        </div>
+                    `;
+
+            optionsContainer.appendChild(row);
+            bindRemoveButtons();
+            syncAnswerType();
+        });
+
+        allowMultiple.addEventListener("change", syncAnswerType);
+
+        bindRemoveButtons();
+        reindexOptions();
+        syncAnswerType();
+    </script>
+}

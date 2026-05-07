@@ -1,0 +1,57 @@
+@model IEnumerable<AuditLog>
+
+@{
+    ViewData["Title"] = "Журнал дій";
+}
+
+<div class="soft-card p-4">
+
+    <h2 class="section-title mb-4">
+        Журнал дій
+    </h2>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center text-muted">
+            Записів поки немає
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+
+            <table class="table align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Користувач</th>
+                        <th>Дія</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var l in Model)
+                    {
+                        <tr>
+                            <td>
+                                @l.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                            </td>
+
+                            <td>
+                                @l.UserId
+                            </td>
+
+                            <td>
+                                @l.Action
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+    }
+
+</div>

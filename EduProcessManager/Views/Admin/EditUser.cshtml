@@ -1,0 +1,30 @@
+@model EduProcessManager.Controllers.UserFormViewModel
+@{ ViewData["Title"] = "Редагування користувача"; var roles = ViewBag.AllowedRoles as string[] ?? Array.Empty<string>(); }
+
+<div class="soft-card p-4">
+    <h2 class="section-title">Редагування користувача</h2>
+    <form method="post">
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <label class="form-label">ПІБ</label>
+        <input asp-for="FullName" class="form-control mb-3" />
+        <label class="form-label">Email</label>
+        <input asp-for="Email" class="form-control mb-3" />
+        <label class="form-label">Новий пароль</label>
+        <input asp-for="Password" type="password" class="form-control mb-1" />
+        <div class="form-text mb-3">Залиште поле порожнім, якщо пароль не потрібно змінювати.</div>
+        <label class="form-label">Роль</label>
+        <select asp-for="Role" class="form-select mb-3">
+            @foreach (var role in roles)
+            {
+                <option value="@role">@role</option>
+            }
+        </select>
+        <div class="form-check mb-3">
+            <input asp-for="IsActive" class="form-check-input" />
+            <label class="form-check-label">Активний обліковий запис</label>
+        </div>
+        <button class="btn edu-btn">Зберегти</button>
+        <a class="btn btn-outline-secondary" asp-action="Users">Назад</a>
+    </form>
+</div>

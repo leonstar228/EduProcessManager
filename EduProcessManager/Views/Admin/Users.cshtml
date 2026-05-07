@@ -1,0 +1,51 @@
+@model IEnumerable<EduProcessManager.Controllers.UserListItemViewModel>
+@{ ViewData["Title"] = "Користувачі"; }
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="section-title mb-1">Користувачі системи</h2>
+        <p class="text-muted mb-0">
+            @if (User.IsInRole("SuperAdmin"))
+            {
+                <span>Суперадмін керує адміністраторами.</span>
+            }
+            else
+            {
+                <span>Адміністратор керує викладачами та студентами.</span>
+            }
+        </p>
+    </div>
+    <a class="btn edu-btn" asp-action="CreateUser">Додати користувача</a>
+</div>
+
+<div class="soft-card p-4">
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th>ПІБ</th>
+                <th>Email</th>
+                <th>Роль</th>
+                <th>Стан</th>
+                <th class="text-end">Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.FullName</td>
+                <td>@u.Email</td>
+                <td><span class="badge badge-soft">@u.Role</span></td>
+                <td>@(u.IsActive ? "Активний" : "Заблокований")</td>
+                <td class="text-end">
+                    <a class="btn btn-sm btn-outline-primary" asp-action="EditUser" asp-route-id="@u.Id">Редагувати</a>
+                    <form class="d-inline" asp-action="DeleteUser" method="post" onsubmit="return confirm('Видалити користувача?');">
+                        <input type="hidden" name="id" value="@u.Id" />
+                        <button class="btn btn-sm btn-outline-danger">Видалити</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

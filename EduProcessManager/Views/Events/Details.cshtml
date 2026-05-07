@@ -1,0 +1,133 @@
+@model EduEvent
+@{
+    ViewData["Title"] = "Деталі заходу";
+    var myRegistration = ViewBag.MyRegistration as EventRegistration;
+
+    var now = DateTime.Now;
+
+    var isRegistrationAvailable =
+        Model.IsRegistrationOpen &&
+        (!Model.RegistrationAvailableFrom.HasValue || now >= Model.RegistrationAvailableFrom.Value) &&
+        (!Model.RegistrationAvailableUntil.HasValue || now <= Model.RegistrationAvailableUntil.Value) &&
+        now < Model.StartAt &&
+        Model.FreePlaces > 0;
+}
+
+<div class="soft-card p-4 mb-3">
+    <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+        <div>
+            <h2>@Model.Title</h2>
+            <p class="text-muted mb-3">@Model.Description</p>
+        </div>
+        @if (User.IsInRole("Teacher") || User.IsInRole("Admin"))
+        {
+            <div class="d-flex gap-2">
+                <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@Model.Id">Редагувати</a>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Видалити цей захід?');">
+                    <button class="btn btn-sm btn-outline-danger">Видалити</button>
+                </form>
+            </div>
+        }
+    </div>
+
+    <p><strong>Місце:</strong> @Model.Location</p>
+    <p><strong>Дата:</strong> @Model.StartAt.ToString("dd.MM.yyyy HH:mm")</p>
+    <p><strong>Вільно місць:</strong> @Model.FreePlaces</p>
+
+    <p>
+        <strong>Реєстрація:</strong>
+        @(isRegistrationAvailable ? "відкрита" : "закрита")
+    </p>
+
+    @if (User.IsInRole("Student"))
+    {
+        if (myRegistration == null)
+        {
+            if (isRegistrationAvailable)
+            {
+                <form asp-action="Register" method="post">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button class="btn edu-btn">Надіслати заявку на реєстрацію</button>
+                </form>
+            }
+            else
+            {
+                <div class="alert alert-secondary mb-0">
+                    Реєстрація зараз недоступна.
+                </div>
+            }
+        }
+        else if (myRegistration.Status == RegistrationStatus.Pending)
+        {
+            <div class="alert alert-warning mb-0">Ваш запит на реєстрацію надіслано та очікує підтвердження.</div>
+        }
+        else if (myRegistration.Status == RegistrationStatus.Confirmed)
+        {
+            <div class="alert alert-success mb-0">Ви зареєстровані на цей захід.</div>
+        }
+        else if (myRegistration.Status == RegistrationStatus.Rejected)
+        {
+            <div class="alert alert-danger mb-0">Вашу заявку на цей захід відхилено.</div>
+        }
+    }
+</div>
+
+@if (User.IsInRole("Teacher") || User.IsInRole("Admin"))
+{
+    <div class="soft-card p-4">
+        <h4 class="mb-3">Заявки та учасники</h4>
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Студент</th>
+                    <th>Email</th>
+                    <th>Статус</th>
+                    <th>Дата заявки</th>
+                    <th class="text-end">Дії</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model.Registrations.OrderBy(r => r.Status).ThenBy(r => r.RegisteredAt))
+                {
+                    <tr>
+                        <td>@r.Student?.FullName</td>
+                        <td>@r.Student?.Email</td>
+                        <td>
+                            @if (r.Status == RegistrationStatus.Pending)
+                            {
+                                <span class="badge text-bg-warning">Очікує</span>
+                            }
+                            else if (r.Status == RegistrationStatus.Confirmed)
+                            {
+                                <span class="badge text-bg-success">Підтверджено</span>
+                            }
+                            else if (r.Status == RegistrationStatus.Rejected)
+                            {
+                                <span class="badge text-bg-danger">Відхилено</span>
+                            }
+                        </td>
+                        <td>@r.RegisteredAt.ToString("dd.MM.yyyy HH:mm")</td>
+                        <td class="text-end">
+                            @if (r.Status != RegistrationStatus.Confirmed)
+                            {
+                                <form class="d-inline" asp-action="Confirm" method="post">
+                                    <input type="hidden" name="registrationId" value="@r.Id" />
+                                    <input type="hidden" name="eventId" value="@Model.Id" />
+                                    <button class="btn btn-sm btn-outline-success">Підтвердити</button>
+                                </form>
+                            }
+                            @if (r.Status != RegistrationStatus.Rejected)
+                            {
+                                <form class="d-inline" asp-action="Reject" method="post">
+                                    <input type="hidden" name="registrationId" value="@r.Id" />
+                                    <input type="hidden" name="eventId" value="@Model.Id" />
+                                    <button class="btn btn-sm btn-outline-danger">Відхилити</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

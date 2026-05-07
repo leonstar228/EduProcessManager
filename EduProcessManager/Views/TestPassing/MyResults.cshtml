@@ -1,0 +1,79 @@
+﻿@model IEnumerable<TestAttempt>
+
+@{
+    ViewData["Title"] = "Мої результати";
+    var testId = ViewBag.TestId as int?;
+}
+
+<div class="soft-card p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+            <h2 class="section-title mb-1">Мої результати</h2>
+
+            @if (testId.HasValue && Model.Any())
+            {
+                <div class="text-muted">
+                    Усі спроби з тесту: @Model.First().Test?.Title
+                </div>
+            }
+            else
+            {
+                <div class="text-muted">
+                    Історія проходження тестів
+                </div>
+            }
+        </div>
+
+        <a asp-controller="Tests" asp-action="Index" class="btn btn-outline-secondary">
+            Назад до тестів
+        </a>
+    </div>
+</div>
+
+<div class="soft-card p-4">
+    @if (!Model.Any())
+    {
+        <div class="text-center text-muted py-4">
+            Результатів ще немає
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Тест</th>
+                        <th>Дисципліна</th>
+                        <th>Бал</th>
+                        <th>Відсоток</th>
+                        <th>Початок</th>
+                        <th>Завершено</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var attempt in Model)
+                    {
+                        var percent = attempt.MaxScore == 0
+                        ? 0
+                        : Math.Round(attempt.Score * 100.0 / attempt.MaxScore, 1);
+
+                        <tr>
+                            <td>@attempt.Test?.Title</td>
+                            <td>@attempt.Test?.Subject?.Name</td>
+                            <td>
+                                <span class="badge badge-soft">
+                                    @attempt.Score / @attempt.MaxScore
+                                </span>
+                            </td>
+                            <td>@percent%</td>
+                            <td>@attempt.StartedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td>@attempt.FinishedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

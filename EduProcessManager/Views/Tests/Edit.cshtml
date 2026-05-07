@@ -1,0 +1,113 @@
+@model EduProcessManager.ViewModels.Tests.TestFormViewModel
+
+@{
+    ViewData["Title"] = "Редагування тесту";
+}
+
+<div class="soft-card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="section-title mb-0">Редагування тесту</h2>
+
+        <a asp-controller="TestQuestions"
+           asp-action="Questions"
+           asp-route-testId="@Model.Id"
+           class="btn edu-btn">
+            Редагувати питання
+        </a>
+    </div>
+
+    <form method="post">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label class="form-label">Назва</label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Опис</label>
+            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Ліміт часу, хв</label>
+                <input asp-for="TimeLimitMinutes" class="form-control" type="number" min="1" />
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Кількість спроб</label>
+                <input asp-for="MaxAttempts" class="form-control" type="number" min="0" />
+                <div class="form-text">0 означає безліміт</div>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Система оцінювання</label>
+                <select asp-for="ScoreScale" class="form-select">
+                    <option value="Points">Бали за питаннями</option>
+                    <option value="Percent100">100-бальна</option>
+                    <option value="Twelve">12-бальна</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row g-3 mt-3">
+            <div class="col-md-6">
+                <label class="form-label">Доступний з</label>
+                <input asp-for="AvailableFrom" class="form-control" type="datetime-local" />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Доступний до</label>
+                <input asp-for="AvailableUntil" class="form-control" type="datetime-local" />
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <label class="form-label">Опублікувати для груп</label>
+
+            @if (!Model.Groups.Any())
+            {
+                <div class="alert alert-warning">
+                    Групи ще не створені
+                </div>
+            }
+            else
+            {
+                <div class="row g-2">
+                    @foreach (var group in Model.Groups)
+                    {
+                        <div class="col-md-4">
+                            <label class="border rounded-3 p-3 d-flex gap-2 align-items-center h-100">
+                                <input type="checkbox"
+                                       name="SelectedGroupIds"
+                                       value="@group.Id"
+                                       checked="@(Model.SelectedGroupIds.Contains(group.Id))" />
+                                <span>@group.Name</span>
+                            </label>
+                        </div>
+                    }
+                </div>
+
+                <div class="form-text">
+                    Якщо не вибрати жодної групи, тест буде доступний усім студентам.
+                </div>
+            }
+        </div>
+
+        <div class="form-check form-switch my-4">
+            <input asp-for="IsPublished" class="form-check-input" />
+            <label class="form-check-label">Опубліковано</label>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn edu-btn px-4">Зберегти</button>
+
+            <a asp-controller="Tests" asp-action="Index" class="btn btn-outline-secondary">
+                Назад
+            </a>
+        </div>
+    </form>
+</div>

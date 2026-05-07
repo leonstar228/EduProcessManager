@@ -1,0 +1,107 @@
+@model EduProcessManager.ViewModels.Tests.TestPassViewModel
+
+@{
+    ViewData["Title"] = "Проходження тесту";
+}
+
+<div class="soft-card p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <h2 class="mb-2">@Model.Title</h2>
+
+            <p class="text-muted mb-0">
+                Ліміт часу: <strong>@Model.TimeLimitMinutes хвилин</strong>
+            </p>
+        </div>
+
+        <div class="text-end">
+            <div class="text-muted">Залишилось часу</div>
+            <div id="timer" class="fs-3 fw-bold text-danger">--:--</div>
+        </div>
+    </div>
+</div>
+
+<form asp-controller="TestPassing" asp-action="Pass" method="post" id="testForm">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="TestId" />
+    <input type="hidden" asp-for="StartedAt" id="StartedAt" />
+
+    @foreach (var q in Model.Questions)
+    {
+        <div class="question-box mb-4 p-3 border rounded-3">
+            <h5 class="mb-3">
+                @q.Text
+                <span class="text-muted">(@q.Points б.)</span>
+            </h5>
+
+            @foreach (var a in q.AnswerOptions)
+            {
+                <div class="form-check mb-2">
+                    <input class="form-check-input"
+                           type="@(q.AllowMultipleAnswers ? "checkbox" : "radio")"
+                           name="SelectedAnswers[@q.Id]"
+                           value="@a.Id"
+                           id="q@q.Id-a@a.Id" />
+
+                    <label class="form-check-label" for="q@q.Id-a@a.Id">
+                        @a.Text
+                    </label>
+                </div>
+            }
+        </div>
+    }
+
+    <button class="btn edu-btn btn-lg px-4" type="submit">
+        Завершити тест
+    </button>
+</form>
+
+@section Scripts {
+    <script>
+        const testId = "@Model.TestId";
+        const timeLimitMinutes = @Model.TimeLimitMinutes;
+        const totalSeconds = timeLimitMinutes * 60;
+        const storageKey = "test_started_" + testId;
+
+        let startedAt = localStorage.getItem(storageKey);
+
+        if (!startedAt) {
+            startedAt = new Date().toISOString();
+            localStorage.setItem(storageKey, startedAt);
+        }
+
+        document.getElementById("StartedAt").value = startedAt;
+
+        const startedTime = new Date(startedAt).getTime();
+        const endTime = startedTime + totalSeconds * 1000;
+        const timerElement = document.getElementById("timer");
+        const form = document.getElementById("testForm");
+
+        function updateTimer() {
+            const now = new Date().getTime();
+            const remaining = Math.floor((endTime - now) / 1000);
+
+            if (remaining <= 0) {
+                timerElement.textContent = "00:00";
+                localStorage.removeItem(storageKey);
+                form.submit();
+                return;
+            }
+
+            const minutes = Math.floor(remaining / 60);
+            const seconds = remaining % 60;
+
+            timerElement.textContent =
+                minutes.toString().padStart(2, "0") + ":" +
+                seconds.toString().padStart(2, "0");
+        }
+
+        form.addEventListener("submit", function () {
+            localStorage.removeItem(storageKey);
+        });
+
+        updateTimer();
+        setInterval(updateTimer, 1000);
+    </script>
+}

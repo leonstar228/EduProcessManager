@@ -1,0 +1,153 @@
+@model IEnumerable<Test>
+
+@{
+    ViewData["Title"] = "Тести";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="section-title">Доступні тести</h2>
+
+    <div class="d-flex gap-2">
+        @if (User.IsInRole("Student"))
+        {
+            <a class="btn btn-outline-secondary" asp-controller="TestPassing" asp-action="MyResults">
+                Мої результати
+            </a>
+        }
+
+        @if (User.IsInRole("Teacher") || User.IsInRole("Admin"))
+        {
+            <a class="btn edu-btn" asp-controller="Tests" asp-action="Create">Створити тест</a>
+        }
+    </div>
+</div>
+
+<div class="row g-3">
+    @foreach (var t in Model)
+    {
+        var now = DateTime.Now;
+
+        string statusText;
+        string statusClass;
+
+        if (t.AvailableFrom != null && t.AvailableFrom > now)
+        {
+            statusText = "Очікується";
+            statusClass = "bg-warning text-dark";
+        }
+        else if (t.AvailableUntil != null && t.AvailableUntil < now)
+        {
+            statusText = "Прострочений";
+            statusClass = "bg-danger";
+        }
+        else
+        {
+            statusText = "Активний";
+            statusClass = "bg-success";
+        }
+
+        <div class="col-md-6">
+            <div class="soft-card p-4 h-100">
+                <div class="badge badge-soft mb-2">@t.Subject?.Name</div>
+
+                <h4>@t.Title</h4>
+
+                <p class="text-muted">@t.Description</p>
+
+                <div class="mb-3">
+                    <span class="badge @statusClass me-1">@statusText</span>
+
+                    <span class="badge bg-light text-dark border me-1">
+                        @t.TimeLimitMinutes хв.
+                    </span>
+
+                    @if (t.MaxAttempts == 0)
+                    {
+                        <span class="badge bg-light text-dark border me-1">Спроби: безліміт</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-light text-dark border me-1">Спроби: @t.MaxAttempts</span>
+                    }
+
+                    <span class="badge bg-light text-dark border">
+                        @(t.IsPublished ? "Опубліковано" : "Чернетка")
+                    </span>
+                </div>
+
+                @if (t.AvailableFrom != null || t.AvailableUntil != null)
+                {
+                    <div class="small text-muted mb-3">
+                        @if (t.AvailableFrom != null)
+                        {
+                            <span>Доступний з: @t.AvailableFrom.Value.ToString("dd.MM.yyyy HH:mm")</span>
+                        }
+
+                        @if (t.AvailableUntil != null)
+                        {
+                            <span class="ms-2">Доступний до: @t.AvailableUntil.Value.ToString("dd.MM.yyyy HH:mm")</span>
+                        }
+                    </div>
+                }
+
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div></div>
+
+                    <div class="d-flex gap-2 flex-wrap">
+                        @if (User.IsInRole("Student"))
+                        {
+                            <a class="btn accent-btn"
+                               asp-controller="TestPassing"
+                               asp-action="Pass"
+                               asp-route-id="@t.Id">
+                                Пройти
+                            </a>
+
+                            @if (t.Attempts != null && t.Attempts.Any())
+                            {
+                                <a class="btn btn-outline-secondary"
+                                   asp-controller="TestPassing"
+                                   asp-action="MyResults"
+                                   asp-route-testId="@t.Id">
+                                    Мої результати
+                                </a>
+                            }
+                        }
+
+                        @if (User.IsInRole("Teacher") || User.IsInRole("Admin"))
+                        {
+                            <a class="btn btn-sm btn-outline-secondary"
+                               asp-controller="Tests"
+                               asp-action="Details"
+                               asp-route-id="@t.Id">
+                                Переглянути
+                            </a>
+
+                            <a class="btn btn-sm btn-outline-dark"
+                               asp-controller="TestQuestions"
+                               asp-action="Questions"
+                               asp-route-testId="@t.Id">
+                                Питання
+                            </a>
+
+                            <a class="btn btn-sm btn-outline-primary"
+                               asp-controller="Tests"
+                               asp-action="Edit"
+                               asp-route-id="@t.Id">
+                                Редагувати
+                            </a>
+
+                            <form asp-controller="Tests"
+                                  asp-action="Delete"
+                                  asp-route-id="@t.Id"
+                                  method="post"
+                                  onsubmit="return confirm('Видалити цей тест?');">
+                                <button class="btn btn-sm btn-outline-danger">Видалити</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
