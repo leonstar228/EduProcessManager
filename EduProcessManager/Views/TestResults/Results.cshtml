@@ -1,0 +1,136 @@
+﻿@model IEnumerable<EduProcessManager.Models.TestAttempt>
+
+@{
+    ViewData["Title"] = "Результати тестів";
+
+    string ToggleSort(string field)
+    {
+        var current = ViewBag.SortOrder as string ?? "date_desc";
+
+        if (current == field + "_asc")
+            return field + "_desc";
+
+        return field + "_asc";
+    }
+
+    var search = ViewBag.Search as string;
+    var searchBy = ViewBag.SearchBy as string ?? "all";
+}
+
+<div class="soft-card p-4 mb-4">
+    <h2 class="section-title mb-3">Результати тестів</h2>
+
+    <form method="get" asp-controller="TestResults" asp-action="Results" class="row g-2">
+        <div class="col-md-5">
+            <input type="text"
+                   name="search"
+                   value="@search"
+                   class="form-control"
+                   placeholder="Пошук..." />
+        </div>
+
+        <div class="col-md-4">
+            <select name="searchBy" class="form-select">
+                <option value="all" selected="@(searchBy == "all")">Усі поля</option>
+                <option value="student" selected="@(searchBy == "student")">За студентом</option>
+                <option value="test" selected="@(searchBy == "test")">За тестом</option>
+                <option value="score" selected="@(searchBy == "score")">За балом</option>
+                <option value="date" selected="@(searchBy == "date")">За датою</option>
+            </select>
+        </div>
+
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn edu-btn w-100">
+                Шукати
+            </button>
+
+            <a asp-controller="TestResults"
+               asp-action="Results"
+               class="btn btn-outline-secondary">
+                Очистити
+            </a>
+        </div>
+    </form>
+</div>
+
+<div class="soft-card p-4">
+    @if (!Model.Any())
+    {
+        <div class="text-center text-muted py-4">
+            Результатів не знайдено
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>
+                            <a asp-controller="TestResults"
+                               asp-action="Results"
+                               asp-route-search="@search"
+                               asp-route-searchBy="@searchBy"
+                               asp-route-sortOrder="@ToggleSort("student")"
+                               class="text-decoration-none">
+                                Студент
+                            </a>
+                        </th>
+
+                        <th>
+                            <a asp-controller="TestResults"
+                               asp-action="Results"
+                               asp-route-search="@search"
+                               asp-route-searchBy="@searchBy"
+                               asp-route-sortOrder="@ToggleSort("test")"
+                               class="text-decoration-none">
+                                Тест
+                            </a>
+                        </th>
+
+                        <th>
+                            <a asp-controller="TestResults"
+                               asp-action="Results"
+                               asp-route-search="@search"
+                               asp-route-searchBy="@searchBy"
+                               asp-route-sortOrder="@ToggleSort("score")"
+                               class="text-decoration-none">
+                                Бал
+                            </a>
+                        </th>
+
+                        <th>Відсоток</th>
+
+                        <th>
+                            <a asp-controller="TestResults"
+                               asp-action="Results"
+                               asp-route-search="@search"
+                               asp-route-searchBy="@searchBy"
+                               asp-route-sortOrder="@ToggleSort("date")"
+                               class="text-decoration-none">
+                                Дата
+                            </a>
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var attempt in Model)
+                    {
+                        var percent = attempt.MaxScore == 0
+                        ? 0
+                        : Math.Round(attempt.Score * 100.0 / attempt.MaxScore, 1);
+
+                        <tr>
+                            <td>@attempt.Student?.FullName</td>
+                            <td>@attempt.Test?.Title</td>
+                            <td>@attempt.Score / @attempt.MaxScore</td>
+                            <td>@percent%</td>
+                            <td>@attempt.FinishedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

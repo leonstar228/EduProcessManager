@@ -1,0 +1,89 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\\u0434\u0437 \u043A\u043E\u043B\u0435\u0434\u0436\\4 \u043A\u0443\u0440\u0441\\2semestr\\EduProcessManager\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{1C4DDC6A-8650-4B4E-959F-CEBADC2C6F0F}|EduProcessManager\\EduProcessManager.csproj|d:\\\u0434\u0437 \u043A\u043E\u043B\u0435\u0434\u0436\\4 \u043A\u0443\u0440\u0441\\2semestr\\eduprocessmanager\\eduprocessmanager\\views\\testresults\\results.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1C4DDC6A-8650-4B4E-959F-CEBADC2C6F0F}|EduProcessManager\\EduProcessManager.csproj|solutionrelative:eduprocessmanager\\views\\testresults\\results.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 7,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:14:0:{fabf9319-47eb-497e-b8f6-d9f73fba5f55}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:15:0:{fabf9319-47eb-497e-b8f6-d9f73fba5f55}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:16:0:{fabf9319-47eb-497e-b8f6-d9f73fba5f55}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:10:0:{fabf9319-47eb-497e-b8f6-d9f73fba5f55}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1629223841:0:{bf84ea66-d821-4dba-b1b1-2777d8574775}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{f37f5141-198e-4181-9582-7b026ee8f915}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Results.cshtml",
+              "DocumentMoniker": "D:\\\u0434\u0437 \u043A\u043E\u043B\u0435\u0434\u0436\\4 \u043A\u0443\u0440\u0441\\2semestr\\EduProcessManager\\EduProcessManager\\Views\\TestResults\\Results.cshtml",
+              "RelativeDocumentMoniker": "EduProcessManager\\Views\\TestResults\\Results.cshtml",
+              "ToolTip": "D:\\\u0434\u0437 \u043A\u043E\u043B\u0435\u0434\u0436\\4 \u043A\u0443\u0440\u0441\\2semestr\\EduProcessManager\\EduProcessManager\\Views\\TestResults\\Results.cshtml",
+              "RelativeToolTip": "EduProcessManager\\Views\\TestResults\\Results.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-10T12:02:45.234Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedWidth": 903,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            }
+          ]
+        },
+        {
+          "DockedWidth": 903,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

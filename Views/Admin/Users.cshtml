@@ -1,3 +1,0 @@
-@model IEnumerable<ApplicationUser>
-@{ ViewData["Title"] = "Користувачі"; }
-<div class="soft-card p-4"><h2 class="section-title">Користувачі системи</h2><table class="table"><thead><tr><th>ПІБ</th><th>Email</th><th>Стан</th><th></th></tr></thead><tbody>@foreach(var u in Model){<tr><td>@u.FullName</td><td>@u.Email</td><td>@(u.IsActive ? "Активний" : "Заблокований")</td><td><form asp-action="ToggleUser" method="post"><input type="hidden" name="id" value="@u.Id"/><button class="btn btn-sm btn-outline-secondary">Змінити стан</button></form></td></tr>}</tbody></table></div>
