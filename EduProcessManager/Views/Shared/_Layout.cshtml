@@ -58,6 +58,46 @@
                             </a>
                         </li>
                     }
+
+                    @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle"
+                               href="#"
+                               role="button"
+                               data-bs-toggle="dropdown">
+                                Розклад
+                            </a>
+
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item"
+                                       asp-controller="Schedule"
+                                       asp-action="Index">
+                                        Розклад занять
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item"
+                                       asp-controller="BellSchedule"
+                                       asp-action="Index">
+                                        Дзвінки
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Schedule"
+                               asp-action="Index">
+                                Розклад
+                            </a>
+                        </li>
+                    }
                 </ul>
 
                 <div class="d-flex gap-2 align-items-center">

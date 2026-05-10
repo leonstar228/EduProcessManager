@@ -1,6 +1,7 @@
 using EduProcessManager.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace EduProcessManager.Data;
 
@@ -18,6 +19,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<StudentGroup> StudentGroups { get; set; }
     public DbSet<TestStudentGroup> TestStudentGroups { get; set; }
+    public DbSet<LessonSchedule> LessonSchedules { get; set; }
+    public DbSet<BellSchedule> BellSchedules { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -68,5 +72,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .WithMany(x => x.Students)
             .HasForeignKey(x => x.StudentGroupId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        builder.Entity<LessonSchedule>()
+            .HasOne(x => x.StudentGroup)
+            .WithMany()
+            .HasForeignKey(x => x.StudentGroupId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

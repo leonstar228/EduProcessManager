@@ -1,0 +1,174 @@
+﻿@model EduProcessManager.Models.LessonSchedule
+
+@{
+    ViewData["Title"] = "Деталі заняття";
+
+    string DayName(DayOfWeek day)
+    {
+        return day switch
+        {
+            DayOfWeek.Monday => "Понеділок",
+            DayOfWeek.Tuesday => "Вівторок",
+            DayOfWeek.Wednesday => "Середа",
+            DayOfWeek.Thursday => "Четвер",
+            DayOfWeek.Friday => "П’ятниця",
+            _ => "—"
+        };
+    }
+}
+
+<div class="soft-card p-4">
+
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+        <div>
+            <div class="badge-soft px-3 py-2 rounded-pill mb-3 d-inline-block">
+                @Model.StudentGroup.Name
+            </div>
+
+            <h2 class="section-title mb-2">
+                @Model.SubjectName
+            </h2>
+
+            <div class="text-muted">
+                Детальна інформація про заняття
+            </div>
+        </div>
+
+        <a asp-controller="Schedule"
+           asp-action="Index"
+           asp-route-groupId="@Model.StudentGroupId"
+           class="btn btn-outline-secondary">
+            Назад
+        </a>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-8">
+            <div class="soft-card p-4 h-100">
+
+                <h5 class="mb-4 fw-bold">
+                    Основна інформація
+                </h5>
+
+                <div class="lesson-detail-grid">
+
+                    <div class="lesson-detail-item">
+                        <div class="lesson-detail-label">
+                            Предмет
+                        </div>
+
+                        <div class="lesson-detail-value">
+                            @Model.SubjectName
+                        </div>
+                    </div>
+
+                    <div class="lesson-detail-item">
+                        <div class="lesson-detail-label">
+                            Викладач
+                        </div>
+
+                        <div class="lesson-detail-value">
+                            @Model.TeacherName
+                        </div>
+                    </div>
+
+                    <div class="lesson-detail-item">
+                        <div class="lesson-detail-label">
+                            Аудиторія
+                        </div>
+
+                        <div class="lesson-detail-value">
+                            @Model.Room
+                        </div>
+                    </div>
+
+                    <div class="lesson-detail-item">
+                        <div class="lesson-detail-label">
+                            День
+                        </div>
+
+                        <div class="lesson-detail-value">
+                            @DayName(Model.DayOfWeek)
+                        </div>
+                    </div>
+
+                    <div class="lesson-detail-item">
+                        <div class="lesson-detail-label">
+                            Початок
+                        </div>
+
+                        <div class="lesson-detail-value">
+                            @Model.StartTime.ToString(@"hh\:mm")
+                        </div>
+                    </div>
+
+                    <div class="lesson-detail-item">
+                        <div class="lesson-detail-label">
+                            Кінець
+                        </div>
+
+                        <div class="lesson-detail-value">
+                            @Model.EndTime.ToString(@"hh\:mm")
+                        </div>
+                    </div>
+
+                    <div class="lesson-detail-item lesson-detail-full">
+                        <div class="lesson-detail-label">
+                            Опис
+                        </div>
+
+                        <div class="lesson-detail-description">
+                            @(string.IsNullOrWhiteSpace(Model.Description)
+                                ? "Опис відсутній"
+                                : Model.Description)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="soft-card p-4 h-100">
+
+                <h5 class="mb-4 fw-bold">
+                    Коротко
+                </h5>
+
+                <div class="lesson-side-info">
+
+                    <div class="lesson-side-block">
+                        <div class="lesson-side-title">
+                            Група
+                        </div>
+
+                        <div class="lesson-side-value">
+                            @Model.StudentGroup.Name
+                        </div>
+                    </div>
+
+                    <div class="lesson-side-block">
+                        <div class="lesson-side-title">
+                            Тривалість
+                        </div>
+
+                        <div class="lesson-side-value">
+                            @((Model.EndTime - Model.StartTime).TotalMinutes) хв
+                        </div>
+                    </div>
+
+                    <div class="lesson-side-block">
+                        <div class="lesson-side-title">
+                            Формат
+                        </div>
+
+                        <div class="lesson-side-value">
+                            @(Model.Room.Contains("Online") ? "Онлайн" : "Офлайн")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

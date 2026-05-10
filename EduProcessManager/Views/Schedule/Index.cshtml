@@ -1,0 +1,330 @@
+﻿@model EduProcessManager.ViewModels.Schedule.ScheduleIndexViewModel
+
+@{
+    ViewData["Title"] = "Розклад занять";
+
+    var days = new[]
+    {
+        DayOfWeek.Monday,
+        DayOfWeek.Tuesday,
+        DayOfWeek.Wednesday,
+        DayOfWeek.Thursday,
+        DayOfWeek.Friday
+    };
+
+    string DayName(DayOfWeek day)
+    {
+        return day switch
+        {
+            DayOfWeek.Monday => "Понеділок",
+            DayOfWeek.Tuesday => "Вівторок",
+            DayOfWeek.Wednesday => "Середа",
+            DayOfWeek.Thursday => "Четвер",
+            DayOfWeek.Friday => "П’ятниця",
+            _ => ""
+        };
+    }
+
+    var startHour = 8;
+    var endHour = 19;
+    var selectedGroup = Model.Groups.FirstOrDefault(g => g.Id == Model.SelectedGroupId);
+    var today = DateTime.Now.DayOfWeek;
+}
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <div>
+        <h2 class="section-title mb-1">Розклад занять</h2>
+
+        @if (selectedGroup != null)
+        {
+            <div class="text-muted">
+                Група: @selectedGroup.Name
+            </div>
+        }
+    </div>
+
+    @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+    {
+        <div class="d-flex gap-2">
+            <a asp-controller="Schedule" asp-action="Create" class="btn edu-btn">
+                Додати заняття
+            </a>
+
+            <a asp-controller="BellSchedule" asp-action="Index" class="btn btn-outline-secondary">
+                Дзвінки
+            </a>
+        </div>
+    }
+</div>
+
+<div class="soft-card p-4 mb-4">
+    <form method="get" asp-controller="Schedule" asp-action="Index" class="row g-2 align-items-end">
+        <div class="col-md-5">
+            <label class="form-label">Пошук групи</label>
+            <input type="text"
+                   name="search"
+                   value="@Model.Search"
+                   class="form-control"
+                   placeholder="Наприклад: ІПЗ-41" />
+        </div>
+
+        <div class="col-md-5">
+            <label class="form-label">Група</label>
+            <select name="groupId" class="form-select">
+                @foreach (var group in Model.Groups)
+                {
+                    <option value="@group.Id" selected="@(group.Id == Model.SelectedGroupId)">
+                        @group.Name
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <button class="btn edu-btn w-100" type="submit">
+                Показати
+            </button>
+        </div>
+    </form>
+</div>
+
+@if (!Model.Groups.Any())
+{
+    <div class="soft-card p-4 text-center text-muted">
+        Групи не знайдено
+    </div>
+}
+else
+{
+    <div class="schedule-wrapper soft-card p-3">
+        <div class="schedule-title mb-3">
+            <strong>Поточний тиждень</strong>
+            <span class="text-muted small">(Київський час)</span>
+        </div>
+
+        <div class="schedule-scroll">
+            <div class="schedule-grid" id="scheduleGrid">
+                <div class="schedule-time-header"></div>
+
+                @foreach (var day in days)
+                {
+                    var date = Model.WeekStart.AddDays((int)day - 1);
+                    var isToday = day == today;
+
+                    <div class="schedule-day-header @(isToday ? "today-column" : "")">
+                        @DayName(day), @date.ToString("dd MMMM")
+                    </div>
+                }
+
+                @for (int hour = startHour; hour <= endHour; hour++)
+                {
+                    <div class="schedule-hour">
+                        @hour:00
+                    </div>
+
+                    @foreach (var day in days)
+                    {
+                        var isToday = day == today;
+
+                        <div class="schedule-cell @(isToday ? "today-column" : "")"></div>
+                    }
+                }
+
+                @foreach (var lesson in Model.Lessons)
+                {
+                    var dayIndex = Array.IndexOf(days, lesson.DayOfWeek);
+
+                    if (dayIndex >= 0)
+                    {
+                        var start = lesson.StartTime;
+                        var end = lesson.EndTime;
+
+                        var top = ((start.Hours - startHour) * 60) + start.Minutes;
+                        var height = Math.Max(42, (end - start).TotalMinutes);
+
+                        var now = DateTime.Now;
+                        var isNow =
+                        now.DayOfWeek == lesson.DayOfWeek &&
+                        now.TimeOfDay >= lesson.StartTime &&
+                        now.TimeOfDay <= lesson.EndTime;
+
+                        <div class="lesson-card @(isNow ? "lesson-active" : "") @(lesson.StartTime.Hours >= 18 ? "expand-side" : "") @(lesson.StartTime.Hours >= 19 ? "expand-up" : "")"
+                             onclick="window.location.href='@Url.Action("Details", "Schedule", new { id = lesson.Id })'"
+                             title="<strong>@lesson.SubjectName</strong><br>Викладач: @lesson.TeacherName<br>Аудиторія: @lesson.Room<br>Час: @lesson.StartTime.ToString(@"hh\:mm") – @lesson.EndTime.ToString(@"hh\:mm")<br>@lesson.Description"
+                             style="--day-index: @dayIndex; top: @(top + 60)px; height: @(height)px;">
+
+                            <div class="lesson-title">
+                                @lesson.SubjectName
+                            </div>
+
+                            <div class="lesson-text">
+                                @lesson.TeacherName
+                            </div>
+
+                            <div class="lesson-text text-muted">
+                                @lesson.Room · @lesson.StartTime.ToString(@"hh\:mm") – @lesson.EndTime.ToString(@"hh\:mm")
+                            </div>
+
+                            @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+                            {
+                                <div class="lesson-actions">
+                                    <a asp-controller="Schedule"
+                                       asp-action="Edit"
+                                       asp-route-id="@lesson.Id"
+                                       onclick="event.stopPropagation()"
+                                       class="lesson-action-btn edit">
+                                        ✎
+                                    </a>
+
+                                    <form asp-controller="Schedule"
+                                          asp-action="Delete"
+                                          asp-route-id="@lesson.Id"
+                                          method="post"
+                                          onclick="event.stopPropagation()"
+                                          onsubmit="return confirm('Видалити заняття?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="lesson-action-btn delete">
+                                            ×
+                                        </button>
+                                    </form>
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+
+                <div id="currentTimeLine" class="current-time-line d-none">
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="soft-card p-4 mt-4">
+        <h4 class="mb-3">Розклад дзвінків</h4>
+
+        @if (!Model.Bells.Any())
+        {
+            <div class="text-muted">Дзвінки ще не заповнені</div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>Назва</th>
+                            <th>Початок</th>
+                            <th>Кінець</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var bell in Model.Bells)
+                        {
+                            <tr>
+                                <td>@bell.LessonNumber</td>
+                                <td>@bell.Name</td>
+                                <td>@bell.StartTime.ToString(@"hh\:mm")</td>
+                                <td>@bell.EndTime.ToString(@"hh\:mm")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (Model.Bells.Count > 1)
+            {
+                <div class="mt-4">
+                    <h5 class="mb-3">Перерви</h5>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        @for (int i = 0; i < Model.Bells.Count - 1; i++)
+                        {
+                            var current = Model.Bells[i];
+                            var next = Model.Bells[i + 1];
+                            var breakTime = next.StartTime - current.EndTime;
+
+                            <span class="badge bg-light text-dark border p-2">
+                                Після @current.LessonNumber пари: @breakTime.TotalMinutes хв
+                            </span>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+}
+
+@section Scripts {
+    <script>
+        function updateCurrentLine() {
+            const line = document.getElementById("currentTimeLine");
+
+            if (!line) return;
+
+            const now = new Date();
+            const day = now.getDay();
+            const hour = now.getHours();
+            const minutes = now.getMinutes();
+
+            const startHour = @startHour;
+            const endHour = @endHour;
+
+            if (day < 1 || day > 5 || hour < startHour || hour > endHour) {
+                line.classList.add("d-none");
+                return;
+            }
+
+            const top = 60 + ((hour - startHour) * 60) + minutes;
+
+            line.style.left = `calc(70px + (100% - 70px) / 5 * ${day - 1})`;
+            line.style.width = `calc((100% - 70px) / 5)`;
+            line.style.top = `${top}px`;
+            line.classList.remove("d-none");
+        }
+
+        updateCurrentLine();
+        setInterval(updateCurrentLine, 30000);
+
+        function markExpandableCards() {
+            document.querySelectorAll(".lesson-card").forEach(card => {
+                card.classList.remove("expandable", "grow-down");
+
+                const title = card.querySelector(".lesson-title");
+                const texts = card.querySelectorAll(".lesson-text");
+
+                let needsExpand = false;
+                let needsGrowDown = false;
+
+                if (title) {
+                    if (title.scrollWidth > title.clientWidth + 2) {
+                        needsExpand = true;
+                    }
+
+                    if (title.scrollHeight > title.clientHeight + 2) {
+                        needsGrowDown = true;
+                    }
+                }
+
+                texts.forEach(text => {
+                    if (text.scrollWidth > text.clientWidth + 2) {
+                        needsExpand = true;
+                    }
+                });
+
+                if (needsExpand) {
+                    card.classList.add("expandable");
+                }
+
+                if (needsGrowDown) {
+                    card.classList.add("grow-down");
+                }
+            });
+        }
+
+        markExpandableCards();
+        window.addEventListener("resize", markExpandableCards);
+    </script>
+}

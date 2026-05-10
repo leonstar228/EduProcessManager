@@ -1,0 +1,77 @@
+﻿@model IEnumerable<BellSchedule>
+
+@{
+    ViewData["Title"] = "Розклад дзвінків";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="section-title mb-0">Розклад дзвінків</h2>
+
+    <div class="d-flex gap-2">
+        <a asp-controller="Schedule" asp-action="Index" class="btn btn-outline-secondary">
+            До розкладу занять
+        </a>
+
+        <a asp-controller="BellSchedule" asp-action="Create" class="btn edu-btn">
+            Додати дзвінок
+        </a>
+    </div>
+</div>
+
+<div class="soft-card p-4">
+    @if (!Model.Any())
+    {
+        <div class="text-center text-muted py-4">
+            Дзвінки ще не додані
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Назва</th>
+                        <th>Початок</th>
+                        <th>Кінець</th>
+                        <th class="text-end">Дії</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var bell in Model)
+                    {
+                        <tr>
+                            <td>@bell.LessonNumber</td>
+                            <td>@bell.Name</td>
+                            <td>@bell.StartTime.ToString(@"hh\:mm")</td>
+                            <td>@bell.EndTime.ToString(@"hh\:mm")</td>
+                            <td class="text-end">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a asp-controller="BellSchedule"
+                                       asp-action="Edit"
+                                       asp-route-id="@bell.Id"
+                                       class="btn btn-sm btn-outline-primary">
+                                        Редагувати
+                                    </a>
+
+                                    <form asp-controller="BellSchedule"
+                                          asp-action="Delete"
+                                          asp-route-id="@bell.Id"
+                                          method="post"
+                                          onsubmit="return confirm('Видалити цей дзвінок?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            Видалити
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

@@ -1,0 +1,88 @@
+﻿@model EduProcessManager.ViewModels.Schedule.LessonScheduleFormViewModel
+
+@{
+    ViewData["Title"] = "Редагувати заняття";
+}
+
+<div class="soft-card p-4">
+    <h2 class="section-title mb-4">Редагувати заняття</h2>
+
+    <form asp-controller="Schedule" asp-action="Edit" asp-route-id="@Model.Id" method="post">
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" asp-for="Id" />
+
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label class="form-label">Група</label>
+            <select asp-for="StudentGroupId" class="form-select">
+                @foreach (var group in Model.Groups)
+                {
+                    <option value="@group.Id">@group.Name</option>
+                }
+            </select>
+            <span asp-validation-for="StudentGroupId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Предмет</label>
+            <input asp-for="SubjectName" class="form-control" />
+            <span asp-validation-for="SubjectName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Викладач</label>
+            <input asp-for="TeacherName" class="form-control" />
+            <span asp-validation-for="TeacherName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Аудиторія</label>
+            <input asp-for="Room" class="form-control" />
+            <span asp-validation-for="Room" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">День тижня</label>
+            <select asp-for="DayOfWeek" class="form-select">
+                <option value="Monday">Понеділок</option>
+                <option value="Tuesday">Вівторок</option>
+                <option value="Wednesday">Середа</option>
+                <option value="Thursday">Четвер</option>
+                <option value="Friday">П’ятниця</option>
+            </select>
+            <span asp-validation-for="DayOfWeek" class="text-danger"></span>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Початок</label>
+                <input asp-for="StartTime" type="time" class="form-control" />
+                <span asp-validation-for="StartTime" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Кінець</label>
+                <input asp-for="EndTime" type="time" class="form-control" />
+                <span asp-validation-for="EndTime" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label">Опис</label>
+            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn edu-btn px-4">
+                Зберегти
+            </button>
+
+            <a asp-controller="Schedule" asp-action="Index" asp-route-groupId="@Model.StudentGroupId" class="btn btn-outline-secondary">
+                Назад
+            </a>
+        </div>
+    </form>
+</div>

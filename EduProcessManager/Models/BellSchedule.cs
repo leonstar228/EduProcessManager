@@ -1,12 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace EduProcessManager.Models
+namespace EduProcessManager.Models;
+
+public class BellSchedule
 {
-    public class BellSchedule : Controller
-    {
-        public IActionResult Index()
-        {
-            return View();
-        }
-    }
+    public int Id { get; set; }
+
+    public int LessonNumber { get; set; }
+
+    public TimeSpan StartTime { get; set; }
+
+    public TimeSpan EndTime { get; set; }
+
+    [MaxLength(100)]
+    public string? Name { get; set; }
 }

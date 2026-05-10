@@ -64,6 +64,268 @@ public static class DbSeeder
 
         await db.SaveChangesAsync();
 
+        if (!await db.BellSchedules.AnyAsync())
+        {
+            db.BellSchedules.AddRange(
+                new BellSchedule
+                {
+                    LessonNumber = 1,
+                    Name = "1 пара",
+                    StartTime = new TimeSpan(8, 30, 0),
+                    EndTime = new TimeSpan(10, 0, 0)
+                },
+                new BellSchedule
+                {
+                    LessonNumber = 2,
+                    Name = "2 пара",
+                    StartTime = new TimeSpan(10, 10, 0),
+                    EndTime = new TimeSpan(11, 40, 0)
+                },
+                new BellSchedule
+                {
+                    LessonNumber = 3,
+                    Name = "3 пара",
+                    StartTime = new TimeSpan(12, 0, 0),
+                    EndTime = new TimeSpan(13, 30, 0)
+                },
+                new BellSchedule
+                {
+                    LessonNumber = 4,
+                    Name = "4 пара",
+                    StartTime = new TimeSpan(13, 40, 0),
+                    EndTime = new TimeSpan(15, 10, 0)
+                },
+                new BellSchedule
+                {
+                    LessonNumber = 5,
+                    Name = "5 пара",
+                    StartTime = new TimeSpan(15, 20, 0),
+                    EndTime = new TimeSpan(16, 50, 0)
+                }
+            );
+
+            await db.SaveChangesAsync();
+        }
+
+        if (!await db.LessonSchedules.AnyAsync())
+        {
+            db.LessonSchedules.AddRange(
+                new LessonSchedule
+                {
+                    StudentGroupId = groupIpz41.Id,
+                    SubjectName = "ASP.NET Core MVC",
+                    TeacherName = "Олена Шевчук",
+                    Room = "Аудиторія 212",
+                    DayOfWeek = DayOfWeek.Monday,
+                    StartTime = new TimeSpan(8, 30, 0),
+                    EndTime = new TimeSpan(10, 0, 0),
+                    Description = "Практичне заняття"
+                },
+                new LessonSchedule
+                {
+                    StudentGroupId = groupIpz41.Id,
+                    SubjectName = "Entity Framework Core",
+                    TeacherName = "Андрій Коваленко",
+                    Room = "Аудиторія 305",
+                    DayOfWeek = DayOfWeek.Monday,
+                    StartTime = new TimeSpan(10, 10, 0),
+                    EndTime = new TimeSpan(11, 40, 0),
+                    Description = "Лекція"
+                },
+                new LessonSchedule
+                {
+                    StudentGroupId = groupIpz41.Id,
+                    SubjectName = "Тестування програмного забезпечення",
+                    TeacherName = "Ірина Мельник",
+                    Room = "Аудиторія 101",
+                    DayOfWeek = DayOfWeek.Monday,
+                    StartTime = new TimeSpan(12, 0, 0),
+                    EndTime = new TimeSpan(13, 30, 0),
+                    Description = "Лабораторне заняття"
+                },
+                new LessonSchedule
+                {
+                    StudentGroupId = groupIpz41.Id,
+                    SubjectName = "Бази даних",
+                    TeacherName = "Андрій Коваленко",
+                    Room = "Аудиторія 214",
+                    DayOfWeek = DayOfWeek.Tuesday,
+                    StartTime = new TimeSpan(8, 30, 0),
+                    EndTime = new TimeSpan(10, 0, 0),
+                    Description = "Практичне заняття"
+                },
+                new LessonSchedule
+                {
+                    StudentGroupId = groupIpz41.Id,
+                    SubjectName = "Об'єктно-орієнтоване програмування",
+                    TeacherName = "Олена Шевчук",
+                    Room = "Аудиторія 404",
+                    DayOfWeek = DayOfWeek.Tuesday,
+                    StartTime = new TimeSpan(10, 10, 0),
+                    EndTime = new TimeSpan(11, 40, 0),
+                    Description = "Лекція"
+                },
+                new LessonSchedule
+                {
+                    StudentGroupId = groupIpz41.Id,
+                    SubjectName = "Інформаційна безпека",
+                    TeacherName = "Ірина Мельник",
+                    Room = "Аудиторія 401",
+                    DayOfWeek = DayOfWeek.Wednesday,
+                    StartTime = new TimeSpan(12, 0, 0),
+                    EndTime = new TimeSpan(13, 30, 0),
+                    Description = "Семінар"
+                },
+                new LessonSchedule
+                {
+                    StudentGroupId = groupIpz41.Id,
+                    SubjectName = "Конструювання програмного забезпечення",
+                    TeacherName = "Андрій Коваленко",
+                    Room = "Аудиторія 305",
+                    DayOfWeek = DayOfWeek.Thursday,
+                    StartTime = new TimeSpan(8, 30, 0),
+                    EndTime = new TimeSpan(10, 0, 0),
+                    Description = "Лекція"
+                },
+                new LessonSchedule
+                {
+                    StudentGroupId = groupIpz41.Id,
+                    SubjectName = "Playwright E2E Testing",
+                    TeacherName = "Ірина Мельник",
+                    Room = "Online",
+                    DayOfWeek = DayOfWeek.Friday,
+                    StartTime = new TimeSpan(13, 40, 0),
+                    EndTime = new TimeSpan(15, 10, 0),
+                    Description = "Практикум"
+                },
+
+                new LessonSchedule
+                {
+                    StudentGroupId = groupIpz42.Id,
+                    SubjectName = "C# та .NET",
+                    TeacherName = "Олена Шевчук",
+                    Room = "Аудиторія 404",
+                    DayOfWeek = DayOfWeek.Monday,
+                    StartTime = new TimeSpan(8, 30, 0),
+                    EndTime = new TimeSpan(10, 0, 0),
+                    Description = "Практичне заняття"
+                },
+                new LessonSchedule
+                {
+                    StudentGroupId = groupIpz42.Id,
+                    SubjectName = "ASP.NET Core MVC",
+                    TeacherName = "Олена Шевчук",
+                    Room = "Аудиторія 212",
+                    DayOfWeek = DayOfWeek.Monday,
+                    StartTime = new TimeSpan(10, 10, 0),
+                    EndTime = new TimeSpan(11, 40, 0),
+                    Description = "Лекція"
+                },
+                new LessonSchedule
+                {
+                    StudentGroupId = groupIpz42.Id,
+                    SubjectName = "SQL-запити та нормалізація",
+                    TeacherName = "Андрій Коваленко",
+                    Room = "Аудиторія 214",
+                    DayOfWeek = DayOfWeek.Tuesday,
+                    StartTime = new TimeSpan(12, 0, 0),
+                    EndTime = new TimeSpan(13, 30, 0),
+                    Description = "Лабораторне заняття"
+                },
+                new LessonSchedule
+                {
+                    StudentGroupId = groupIpz42.Id,
+                    SubjectName = "Тестування програмного забезпечення",
+                    TeacherName = "Ірина Мельник",
+                    Room = "Аудиторія 101",
+                    DayOfWeek = DayOfWeek.Wednesday,
+                    StartTime = new TimeSpan(8, 30, 0),
+                    EndTime = new TimeSpan(10, 0, 0),
+                    Description = "Практичне заняття"
+                },
+                new LessonSchedule
+                {
+                    StudentGroupId = groupIpz42.Id,
+                    SubjectName = "SOLID та рефакторинг",
+                    TeacherName = "Андрій Коваленко",
+                    Room = "Аудиторія 305",
+                    DayOfWeek = DayOfWeek.Thursday,
+                    StartTime = new TimeSpan(10, 10, 0),
+                    EndTime = new TimeSpan(11, 40, 0),
+                    Description = "Семінар"
+                },
+                new LessonSchedule
+                {
+                    StudentGroupId = groupIpz42.Id,
+                    SubjectName = "Playwright E2E Testing",
+                    TeacherName = "Ірина Мельник",
+                    Room = "Online",
+                    DayOfWeek = DayOfWeek.Friday,
+                    StartTime = new TimeSpan(13, 40, 0),
+                    EndTime = new TimeSpan(15, 10, 0),
+                    Description = "Практикум"
+                },
+
+                new LessonSchedule
+                {
+                    StudentGroupId = groupKn31.Id,
+                    SubjectName = "Бази даних",
+                    TeacherName = "Андрій Коваленко",
+                    Room = "Аудиторія 214",
+                    DayOfWeek = DayOfWeek.Monday,
+                    StartTime = new TimeSpan(12, 0, 0),
+                    EndTime = new TimeSpan(13, 30, 0),
+                    Description = "Лекція"
+                },
+                new LessonSchedule
+                {
+                    StudentGroupId = groupKn31.Id,
+                    SubjectName = "Інформаційна безпека",
+                    TeacherName = "Ірина Мельник",
+                    Room = "Аудиторія 401",
+                    DayOfWeek = DayOfWeek.Tuesday,
+                    StartTime = new TimeSpan(10, 10, 0),
+                    EndTime = new TimeSpan(11, 40, 0),
+                    Description = "Семінар"
+                },
+                new LessonSchedule
+                {
+                    StudentGroupId = groupKn31.Id,
+                    SubjectName = "Основи програмування C#",
+                    TeacherName = "Олена Шевчук",
+                    Room = "Аудиторія 404",
+                    DayOfWeek = DayOfWeek.Wednesday,
+                    StartTime = new TimeSpan(8, 30, 0),
+                    EndTime = new TimeSpan(10, 0, 0),
+                    Description = "Практичне заняття"
+                },
+                new LessonSchedule
+                {
+                    StudentGroupId = groupKn31.Id,
+                    SubjectName = "Алгоритми та структури даних",
+                    TeacherName = "Андрій Коваленко",
+                    Room = "Аудиторія 305",
+                    DayOfWeek = DayOfWeek.Thursday,
+                    StartTime = new TimeSpan(13, 40, 0),
+                    EndTime = new TimeSpan(15, 10, 0),
+                    Description = "Лабораторне заняття"
+                },
+                new LessonSchedule
+                {
+                    StudentGroupId = groupKn31.Id,
+                    SubjectName = "Вебтехнології",
+                    TeacherName = "Олена Шевчук",
+                    Room = "Аудиторія 212",
+                    DayOfWeek = DayOfWeek.Friday,
+                    StartTime = new TimeSpan(10, 10, 0),
+                    EndTime = new TimeSpan(11, 40, 0),
+                    Description = "Практикум"
+                }
+            );
+
+            await db.SaveChangesAsync();
+        }
+
         if (await db.Tests.AnyAsync())
             return;
 
