@@ -7,28 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Views\Account\AccessDenied.cshtml" />
-    <None Include="Views\Account\Login.cshtml" />
-    <None Include="Views\Admin\Logs.cshtml" />
-    <None Include="Views\Admin\Users.cshtml" />
-    <None Include="Views\Events\Create.cshtml" />
-    <None Include="Views\Events\Details.cshtml" />
-    <None Include="Views\Events\Index.cshtml" />
-    <None Include="Views\Home\Index.cshtml" />
-    <None Include="Views\Home\Privacy.cshtml" />
-    <None Include="Views\Shared\Error.cshtml" />
-    <None Include="Views\Shared\_Layout.cshtml" />
-    <None Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
-    <None Include="Views\Tests\Create.cshtml" />
-    <None Include="Views\Tests\Index.cshtml" />
-    <None Include="Views\TestPassing\Pass.cshtml" />
-    <None Include="Views\TestPassing\Result.cshtml" />
-    <None Include="Views\TestResults\Results.cshtml" />
-    <None Include="Views\_ViewImports.cshtml" />
-    <None Include="Views\_ViewStart.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
